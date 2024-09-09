@@ -1,0 +1,17 @@
+{
+  "name": "built-in-ai-polyfill",
+  "version": "1.0.0",
+  "main": "polyfill.js",
+  "scripts": {
+    "start": "npx http-server",
+    "fix": "prettier --write .",
+    "test": "node tests.js"
+  },
+  "author": "Thomas Steiner (tomac@google.com)",
+  "license": "Apache-2.0",
+  "description": "",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "prettier": "^3.3.3"
+  }
+}
