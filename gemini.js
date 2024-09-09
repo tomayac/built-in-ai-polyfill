@@ -1,16 +1,16 @@
-const API_KEY = localStorage.getItem("GEMINI_API_KEY");
+const API_KEY = localStorage.getItem('GEMINI_API_KEY');
 
 export default (prompt, options, callback) => {
   const abortController = new AbortController();
   const signal = options?.signal;
   if (signal) {
-    signal.addEventListener("abort", () => abortController.abort());
+    signal.addEventListener('abort', () => abortController.abort());
   }
 
   const history = options?.history?.map((entry) => {
     return [
       {
-        role: "user",
+        role: 'user',
         parts: [
           {
             text: entry.user,
@@ -18,7 +18,7 @@ export default (prompt, options, callback) => {
         ],
       },
       {
-        role: "model",
+        role: 'model',
         parts: [
           {
             text: entry.assistant,
@@ -30,17 +30,17 @@ export default (prompt, options, callback) => {
 
   if (!history.length) {
     history.push({
-      role: "model",
+      role: 'model',
       parts: [
         {
-          text: "You are a helpful assistant",
+          text: 'You are a helpful assistant',
         },
       ],
     });
   }
 
   let tokens = 0;
-  let answer = "";
+  let answer = '';
 
   return new ReadableStream({
     async start(controller) {
@@ -48,15 +48,15 @@ export default (prompt, options, callback) => {
         const response = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               contents: history
                 .concat([
                   {
-                    role: "user",
+                    role: 'user',
                     parts: [
                       {
                         text: prompt,
@@ -74,7 +74,7 @@ export default (prompt, options, callback) => {
               },
             }),
             signal: abortController.signal,
-          },
+          }
         );
 
         if (!response.ok || response.status !== 200) {
@@ -85,9 +85,9 @@ export default (prompt, options, callback) => {
         const decoder = new TextDecoder();
 
         for await (const chunk of stream) {
-          const lines = decoder.decode(chunk).split("\n");
+          const lines = decoder.decode(chunk).split('\n');
           for (let line of lines) {
-            line = line.replace(/data:\s*/g, "").trim();
+            line = line.replace(/data:\s*/g, '').trim();
             if (!line) {
               continue;
             }
@@ -96,7 +96,7 @@ export default (prompt, options, callback) => {
               tokens = data?.usageMetadata?.totalTokenCount;
               if (
                 typeof data?.candidates?.[0]?.content?.parts?.[0]?.text !==
-                "undefined"
+                'undefined'
               ) {
                 const payload = data.candidates[0].content.parts[0].text;
                 answer += payload;
@@ -108,7 +108,7 @@ export default (prompt, options, callback) => {
           }
         }
       } catch (err) {
-        if (err.name !== "AbortError") {
+        if (err.name !== 'AbortError') {
           controller.error(err);
         }
       } finally {

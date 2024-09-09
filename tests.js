@@ -1,18 +1,18 @@
-import "./polyfill.js";
+import './polyfill.js';
 
 // Negative tests
 await window.ai.assistant
   .create({
-    systemPrompt: "foo",
+    systemPrompt: 'foo',
     // @ts-expect-error - System prompt cannot be part of the array if systemPrompt is specified.
-    initialPrompts: [{ role: "system" }],
+    initialPrompts: [{ role: 'system' }],
   })
   .catch((err) => console.error(err));
 
 await window.ai.assistant
   .create({
     // @ts-expect-error - System prompt must be first element of the initialPrompt array.
-    initialPrompts: [{ role: "user" }, { role: "system" }],
+    initialPrompts: [{ role: 'user' }, { role: 'system' }],
   })
   .catch((err) => console.error(err));
 
@@ -22,13 +22,13 @@ const assistant = await window.ai.assistant
     topK: 1,
     temperature: 0,
     signal: new AbortController().signal,
-    systemPrompt: "foo",
+    systemPrompt: 'foo',
     initialPrompts: [
-      { role: "assistant", content: "foo" },
-      { role: "user", content: "foo" },
+      { role: 'assistant', content: 'foo' },
+      { role: 'user', content: 'foo' },
     ],
     monitor(m) {
-      m.addEventListener("downloadprogress", (e) => {
+      m.addEventListener('downloadprogress', (e) => {
         console.log(e.loaded, e.total);
       });
     },
@@ -47,25 +47,25 @@ console.table(
   assistantCapabilities.defaultTopK,
   assistantCapabilities.maxTopK,
   assistantCapabilities.defaultTemperature,
-  assistantCapabilities.supportsLanguage("de"),
+  assistantCapabilities.supportsLanguage('de')
 );
 
-assistant.addEventListener("contextoverflow", (e) => {
+assistant.addEventListener('contextoverflow', (e) => {
   console.error(e);
 });
 
-const promptTokens = await assistant.countPromptTokens("foo", {
+const promptTokens = await assistant.countPromptTokens('foo', {
   signal: new AbortController().signal,
 });
 console.log(promptTokens);
 
 const assistantResult = await assistant
-  .prompt("foo", { signal: new AbortController().signal })
+  .prompt('foo', { signal: new AbortController().signal })
   .catch((err) => console.error(err));
 console.log(assistantResult);
 
 try {
-  const stream = assistant.promptStreaming("foo", {
+  const stream = assistant.promptStreaming('foo', {
     signal: new AbortController().signal,
   });
   for await (const chunk of stream) {

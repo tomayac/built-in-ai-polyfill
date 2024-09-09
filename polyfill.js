@@ -1,13 +1,13 @@
 //import askChatGPT from './chatgpt.js';
-import askGemini from "./gemini.js";
+import askGemini from './gemini.js';
 
 // Extend WindowOrWorkerGlobalScope
 (function extendWindowOrWorkerGlobalScope() {
-  if ("ai" in self && "assistant" in self.ai) {
+  if ('ai' in self && 'assistant' in self.ai) {
     return;
   }
-  if (typeof self !== "undefined") {
-    Object.defineProperty(self, "ai", {
+  if (typeof self !== 'undefined') {
+    Object.defineProperty(self, 'ai', {
       get() {
         return new AI();
       },
@@ -64,7 +64,7 @@ class AIAssistant extends EventTarget {
       for (const initialPrompt of this.initialPrompts) {
         if (initialPrompt?.role === AIAssistantPromptRole.SYSTEM) {
           throw new Error(
-            "System prompt cannot be part of the array if systemPrompt is specified.",
+            'System prompt cannot be part of the array if systemPrompt is specified.'
           );
         }
       }
@@ -82,7 +82,7 @@ class AIAssistant extends EventTarget {
       }
       if (containsSystemPrompt && i > 0) {
         throw new Error(
-          "System prompt must be first element of the initialPrompt array.",
+          'System prompt must be first element of the initialPrompt array.'
         );
       }
     }
@@ -106,9 +106,9 @@ class AIAssistant extends EventTarget {
     options.signal = options.signal ?? new AbortController().signal;
 
     const stream = await askGemini(input, options, (data) =>
-      this.updateTokensAndHistory(data),
+      this.updateTokensAndHistory(data)
     );
-    let response = "";
+    let response = '';
     for await (const chunk of stream) {
       response += chunk;
     }
@@ -123,7 +123,7 @@ class AIAssistant extends EventTarget {
     options.signal = options.signal ?? new AbortController().signal;
 
     return askGemini(input, options, (answer) =>
-      this.updateTokensAndHistory(answer),
+      this.updateTokensAndHistory(answer)
     );
   }
 
@@ -172,13 +172,13 @@ class AICreateMonitor extends EventTarget {
 
 // Enumerations
 const AIAssistantPromptRole = {
-  SYSTEM: "system",
-  USER: "user",
-  ASSISTANT: "assistant",
+  SYSTEM: 'system',
+  USER: 'user',
+  ASSISTANT: 'assistant',
 };
 
 const AICapabilityAvailability = {
-  READILY: "readily",
-  AFTER_DOWNLOAD: "after-download",
-  NO: "no",
+  READILY: 'readily',
+  AFTER_DOWNLOAD: 'after-download',
+  NO: 'no',
 };

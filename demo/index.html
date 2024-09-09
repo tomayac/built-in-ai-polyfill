@@ -9,25 +9,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
     <link
+      rel="modulepreload"
+      href="https://cdn.jsdelivr.net/npm/marked@13.0.3/lib/marked.esm.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs"
+    />
+    <link data-rel="modulepreload" href="../gemini.js" />
+    <link data-rel="modulepreload" href="../polyfill.js" />
+    <script>
+      if (!isSecureContext) location.protocol = 'https:';
+      if (!('ai' in self) || !('assistant' in self.ai)) {
+        document
+          .querySelectorAll('link[data-rel="modulepreload"]')
+          .forEach((link) => {
+            link.rel = 'modulepreload';
+          });
+      }
+    </script>
+    <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>"
     />
     <link rel="stylesheet" href="style.css" />
     <title>Prompt API Playground</title>
-    <script>
-      if (!isSecureContext) location.protocol = "https:";
-    </script>
-    <script type="module">
-      if (!("ai" in self) || !("assistant" in self.ai)) {
-        await import("../polyfill.js");
-        if (!localStorage.getItem("GEMINI_API_KEY")) {
-          const apiKey = prompt("Please enter your Gemini API key:");
-          if (apiKey) {
-            localStorage.setItem("GEMINI_API_KEY", apiKey);
-          }
-        }
-      }
-    </script>
+
     <script src="script.js" type="module"></script>
   </head>
   <body>
