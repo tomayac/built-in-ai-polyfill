@@ -17,7 +17,17 @@
     <script>
       if (!isSecureContext) location.protocol = "https:";
     </script>
-    <script src="../polyfill.js" type="module"></script>
+    <script type="module">
+      if (!("ai" in self) || !("assistant" in self.ai)) {
+        await import("../polyfill.js");
+        if (!localStorage.getItem("GEMINI_API_KEY")) {
+          const apiKey = prompt("Please enter your Gemini API key:");
+          if (apiKey) {
+            localStorage.setItem("GEMINI_API_KEY", apiKey);
+          }
+        }
+      }
+    </script>
     <script src="script.js" type="module"></script>
   </head>
   <body>

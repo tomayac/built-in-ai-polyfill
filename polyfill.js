@@ -3,6 +3,9 @@ import askGemini from "./gemini.js";
 
 // Extend WindowOrWorkerGlobalScope
 (function extendWindowOrWorkerGlobalScope() {
+  if ("ai" in self && "assistant" in self.ai) {
+    return;
+  }
   if (typeof self !== "undefined") {
     Object.defineProperty(self, "ai", {
       get() {

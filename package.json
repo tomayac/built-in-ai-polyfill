@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "description": "",
   "devDependencies": {
+    "@types/dom-chromium-ai": "^0.0.0",
     "http-server": "^14.1.1",
     "prettier": "^3.3.3"
   }
