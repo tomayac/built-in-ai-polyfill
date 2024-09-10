@@ -7,7 +7,8 @@ import {
   MAX_TOPK,
 } from './constants.js';
 
-import askAssistant from './ai-providers/cloud/chatgpt.js';
+// import askAssistant from './ai-providers/cloud/chatgpt.js';
+import askAssistant from './ai-providers/local/mediapipe-llm.js';
 //import askAssistant from './ai-providers/cloud/gemini.js';
 
 // Extend WindowOrWorkerGlobalScope
@@ -77,7 +78,11 @@ class AIAssistant extends EventTarget {
     this.#history = [];
 
     // Validate prompts
-    if (this.systemPrompt && this.initialPrompts && Array.isArray(this.initialPrompts)) {
+    if (
+      this.systemPrompt &&
+      this.initialPrompts &&
+      Array.isArray(this.initialPrompts)
+    ) {
       for (const initialPrompt of this.initialPrompts) {
         if (initialPrompt?.role === AIAssistantPromptRole.SYSTEM) {
           throw new Error(

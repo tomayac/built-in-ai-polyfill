@@ -14,5 +14,9 @@
     "@types/dom-chromium-ai": "^0.0.0",
     "http-server": "^14.1.1",
     "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-genai": "^0.10.15",
+    "browser-fs-access": "^0.35.0"
   }
 }
