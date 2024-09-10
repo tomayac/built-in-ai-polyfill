@@ -53,11 +53,22 @@ class AIAssistant extends EventTarget {
 
   constructor(options = {}) {
     super();
-    this.systemPrompt = options.systemPrompt || null;
-    this.initialPrompts = options.initialPrompts || null;
+
+    // Only assign if value exists, otherwise leave it undefined
+    if (options.systemPrompt) {
+      this.systemPrompt = options.systemPrompt;
+    }
+
+    if (options.initialPrompts) {
+      this.initialPrompts = options.initialPrompts;
+    }
+
+    if (options.oncontextoverflow) {
+      this.oncontextoverflow = options.oncontextoverflow;
+    }
+
     this.topK = options.topK || DEFAULT_TOPK;
     this.temperature = options.temperature || DEFAULT_TEMPERATURE;
-    this.oncontextoverflow = options.oncontextoverflow || null;
 
     this.maxTokens = MAX_TOKENS;
     this.tokensLeft = MAX_TOKENS;
@@ -65,11 +76,8 @@ class AIAssistant extends EventTarget {
 
     this.#history = [];
 
-    if (
-      this.systemPrompt &&
-      this.initialPrompts &&
-      Array.isArray(this.initialPrompts)
-    ) {
+    // Validate prompts
+    if (this.systemPrompt && this.initialPrompts && Array.isArray(this.initialPrompts)) {
       for (const initialPrompt of this.initialPrompts) {
         if (initialPrompt?.role === AIAssistantPromptRole.SYSTEM) {
           throw new Error(
@@ -79,6 +87,7 @@ class AIAssistant extends EventTarget {
       }
     }
 
+    // Ensure system prompt comes first
     if (this.initialPrompts && Array.isArray(this.initialPrompts)) {
       let i = 0;
       let containsSystemPrompt = false;
@@ -95,6 +104,8 @@ class AIAssistant extends EventTarget {
         );
       }
     }
+
+    // Add systemPrompt and initialPrompts to history if they exist
     if (this.systemPrompt) {
       this.#history.push({
         role: AIAssistantPromptRole.SYSTEM,
