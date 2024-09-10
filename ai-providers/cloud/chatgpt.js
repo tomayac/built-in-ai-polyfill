@@ -1,4 +1,4 @@
-const API_KEY = localStorage.getItem('GEMINI_API_KEY');
+const API_KEY = localStorage.getItem('OPENAI_API_KEY');
 
 export default (prompt, options, callback) => {
   const abortController = new AbortController();
@@ -8,34 +8,16 @@ export default (prompt, options, callback) => {
   }
 
   const history = options?.history?.map((entry) => {
-    return [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: entry.user,
-          },
-        ],
-      },
-      {
-        role: 'model',
-        parts: [
-          {
-            text: entry.assistant,
-          },
-        ],
-      },
-    ];
+    return {
+      role: entry.role,
+      content: entry.content,
+    };
   });
 
   if (!history.length) {
     history.push({
-      role: 'model',
-      parts: [
-        {
-          text: 'You are a helpful assistant',
-        },
-      ],
+      role: 'system',
+      content: 'You are a helpful assistant',
     });
   }
 
@@ -46,32 +28,28 @@ export default (prompt, options, callback) => {
     async start(controller) {
       try {
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`,
+          'https://api.openai.com/v1/chat/completions',
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${API_KEY}`,
             },
             body: JSON.stringify({
-              contents: history
+              model: 'gpt-4o-mini',
+              stream: true,
+              stream_options: {
+                include_usage: true,
+              },
+              temperature: Math.min(options.temperature, 2.0),
+              messages: history
                 .concat([
                   {
                     role: 'user',
-                    parts: [
-                      {
-                        text: prompt,
-                      },
-                    ],
+                    content: prompt,
                   },
                 ])
                 .flat(),
-              generationConfig: {
-                // stopSequences: ['Title'],
-                // maxOutputTokens: 800,
-                // topP: 0.8,
-                temperature: options.temperature,
-                topK: options.topK,
-              },
             }),
             signal: abortController.signal,
           }
@@ -88,17 +66,14 @@ export default (prompt, options, callback) => {
           const lines = decoder.decode(chunk).split('\n');
           for (let line of lines) {
             line = line.replace(/data:\s*/g, '').trim();
-            if (!line) {
+            if (!line || line === '[DONE]') {
               continue;
             }
             try {
               const data = JSON.parse(line);
-              tokens = data?.usageMetadata?.totalTokenCount;
-              if (
-                typeof data?.candidates?.[0]?.content?.parts?.[0]?.text !==
-                'undefined'
-              ) {
-                const payload = data.candidates[0].content.parts[0].text;
+              tokens = data?.usage?.total_tokens;
+              if (typeof data?.choices?.[0]?.delta?.content !== 'undefined') {
+                const payload = data.choices[0].delta.content;
                 answer += payload;
                 controller.enqueue(payload);
               }
@@ -109,7 +84,7 @@ export default (prompt, options, callback) => {
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
-          controller.error(err);
+          throw err;
         }
       } finally {
         callback({

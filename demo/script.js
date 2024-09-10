@@ -71,7 +71,7 @@ if (!('ai' in self) || !('assistant' in self.ai)) {
         await updateSession();
         updateStats();
       }
-      const stream = await session.promptStreaming(prompt);
+      const stream = session.promptStreaming(prompt);
 
       fullResponse = '';
       for await (const chunk of stream) {

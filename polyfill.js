@@ -1,5 +1,14 @@
-//import askChatGPT from './chatgpt.js';
-import askGemini from './gemini.js';
+import {
+  AIAssistantPromptRole,
+  AICapabilityAvailability,
+  MAX_TOKENS,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_TOPK,
+  MAX_TOPK,
+} from './constants.js';
+
+import askAssistant from './ai-providers/cloud/chatgpt.js';
+//import askAssistant from './ai-providers/cloud/gemini.js';
 
 // Extend WindowOrWorkerGlobalScope
 (function extendWindowOrWorkerGlobalScope() {
@@ -46,12 +55,12 @@ class AIAssistant extends EventTarget {
     super();
     this.systemPrompt = options.systemPrompt || null;
     this.initialPrompts = options.initialPrompts || null;
-    this.topK = options.topK || 3;
-    this.temperature = options.temperature || 0.8;
+    this.topK = options.topK || DEFAULT_TOPK;
+    this.temperature = options.temperature || DEFAULT_TEMPERATURE;
     this.oncontextoverflow = options.oncontextoverflow || null;
 
-    this.maxTokens = 4096;
-    this.tokensLeft = this.maxTokens;
+    this.maxTokens = MAX_TOKENS;
+    this.tokensLeft = MAX_TOKENS;
     this.tokensSoFar = 0;
 
     this.#history = [];
@@ -86,16 +95,31 @@ class AIAssistant extends EventTarget {
         );
       }
     }
+    if (this.systemPrompt) {
+      this.#history.push({
+        role: AIAssistantPromptRole.SYSTEM,
+        content: this.systemPrompt,
+      });
+    }
+    if (this.initialPrompts) {
+      this.#history.push(...this.initialPrompts);
+    }
   }
 
   updateTokensAndHistory(data) {
     this.tokensLeft = this.maxTokens - data.tokens;
     this.tokensSoFar = data.tokens;
 
-    this.#history.push({
-      user: data.prompt,
-      assistant: data.answer,
-    });
+    this.#history.push(
+      {
+        role: AIAssistantPromptRole.USER,
+        content: data.prompt,
+      },
+      {
+        role: AIAssistantPromptRole.ASSISTANT,
+        content: data.answer,
+      }
+    );
   }
 
   async prompt(input, options = {}) {
@@ -105,7 +129,7 @@ class AIAssistant extends EventTarget {
     options.topK = options.topK ?? this.topK;
     options.signal = options.signal ?? new AbortController().signal;
 
-    const stream = await askGemini(input, options, (data) =>
+    const stream = await askAssistant(input, options, (data) =>
       this.updateTokensAndHistory(data)
     );
     let response = '';
@@ -122,7 +146,7 @@ class AIAssistant extends EventTarget {
     options.topK = options.topK ?? this.topK;
     options.signal = options.signal ?? new AbortController().signal;
 
-    return askGemini(input, options, (answer) =>
+    return askAssistant(input, options, (answer) =>
       this.updateTokensAndHistory(answer)
     );
   }
@@ -143,6 +167,7 @@ class AIAssistant extends EventTarget {
   }
 
   destroy() {
+    this.#history = [];
     // This doesn't really do anything.
   }
 }
@@ -151,9 +176,9 @@ class AIAssistant extends EventTarget {
 class AIAssistantCapabilities {
   constructor() {
     this.available = AICapabilityAvailability.READILY;
-    this.defaultTopK = 3;
-    this.maxTopK = 128;
-    this.defaultTemperature = 0.8;
+    this.defaultTopK = DEFAULT_TOPK;
+    this.maxTopK = MAX_TOPK;
+    this.defaultTemperature = DEFAULT_TEMPERATURE;
   }
 
   supportsLanguage(languageTag) {
@@ -169,16 +194,3 @@ class AICreateMonitor extends EventTarget {
     this.ondownloadprogress = null;
   }
 }
-
-// Enumerations
-const AIAssistantPromptRole = {
-  SYSTEM: 'system',
-  USER: 'user',
-  ASSISTANT: 'assistant',
-};
-
-const AICapabilityAvailability = {
-  READILY: 'readily',
-  AFTER_DOWNLOAD: 'after-download',
-  NO: 'no',
-};
