@@ -20,7 +20,7 @@
     <script>
       if (!isSecureContext) location.protocol = 'https:';
       if (!('ai' in self) || !('assistant' in self.ai)) {
-        document.querySelector('link[data-rel$="polyfill.js"]')?.rel =
+        document.querySelector('link[data-rel][href$="polyfill.js"]').rel =
           'modulepreload';
       }
     </script>
