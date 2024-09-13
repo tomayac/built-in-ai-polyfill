@@ -1,3 +1,8 @@
+/**
+  Copyright 2024 Google LLC
+  SPDX-License-Identifier: Apache-2.0
+*/
+
 import {
   AIAssistantPromptRole,
   AICapabilityAvailability,
@@ -7,9 +12,7 @@ import {
   MAX_TOPK,
 } from './constants.js';
 
-// import askAssistant from './ai-providers/cloud/chatgpt.js';
-import askAssistant from './ai-providers/local/mediapipe-llm.js';
-//import askAssistant from './ai-providers/cloud/gemini.js';
+let askAssistant;
 
 // Extend WindowOrWorkerGlobalScope
 (function extendWindowOrWorkerGlobalScope() {
@@ -30,6 +33,12 @@ import askAssistant from './ai-providers/local/mediapipe-llm.js';
 class AI {
   constructor() {
     this.assistant = new AIAssistantFactory();
+
+    this.__polyfill = {
+      async setBackend(backend) {
+        askAssistant = (await import(`./ai-providers/${backend}.js`)).default;
+      },
+    };
   }
 }
 

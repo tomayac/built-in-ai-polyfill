@@ -16,21 +16,12 @@
       rel="modulepreload"
       href="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs"
     />
-    <link data-rel="modulepreload" href="../ai-providers/cloud/gemini.js" />
-    <link data-rel="modulepreload" href="../ai-providers/cloud/chatgpt.js" />
-    <link
-      data-rel="modulepreload"
-      href="../ai-providers/local/mediapipe-llm.js"
-    />
     <link data-rel="modulepreload" href="../polyfill.js" />
     <script>
       if (!isSecureContext) location.protocol = 'https:';
       if (!('ai' in self) || !('assistant' in self.ai)) {
-        document
-          .querySelectorAll('link[data-rel="modulepreload"]')
-          .forEach((link) => {
-            link.rel = 'modulepreload';
-          });
+        document.querySelector('link[data-rel$="polyfill.js"]')?.rel =
+          'modulepreload';
       }
     </script>
     <link

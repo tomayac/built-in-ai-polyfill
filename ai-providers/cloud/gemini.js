@@ -1,3 +1,8 @@
+/**
+  Copyright 2024 Google LLC
+  SPDX-License-Identifier: Apache-2.0
+*/
+
 const API_KEY = localStorage.getItem('GEMINI_API_KEY');
 
 export default (prompt, options, callback) => {
@@ -71,7 +76,7 @@ export default (prompt, options, callback) => {
                 // stopSequences: ['Title'],
                 // maxOutputTokens: 800,
                 // topP: 0.8,
-                temperature: options.temperature,
+                temperature: Math.min(options.temperature, 2.0),
                 topK: options.topK,
               },
             }),

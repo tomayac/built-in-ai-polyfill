@@ -1,3 +1,8 @@
+/**
+  Copyright 2024 Google LLC
+  SPDX-License-Identifier: Apache-2.0
+*/
+
 const API_KEY = localStorage.getItem('OPENAI_API_KEY');
 
 export default (prompt, options, callback) => {
