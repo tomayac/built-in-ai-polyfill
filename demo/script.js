@@ -15,7 +15,7 @@ if (!('ai' in self) || !('assistant' in self.ai)) {
   document.head.append(link);
 
   await import('../polyfill.js');
-  self.ai.__polyfill.setBackend(BACKEND);
+  await self.ai.assistant.__polyfill.setBackend(BACKEND);
 
   if (!localStorage.getItem('GEMINI_API_KEY')) {
     const apiKey = prompt('Please enter your Gemini API key:');
