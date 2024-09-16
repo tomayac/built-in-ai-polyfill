@@ -5,22 +5,24 @@
 
 import './polyfill.js';
 
+/* Prompt */
+
 // Negative tests
-await window.ai.assistant
+await self.ai.assistant
   .create({
     systemPrompt: 'foo',
     initialPrompts: [{ role: 'system' }],
   })
   .catch((err) => console.error(err));
 
-await window.ai.assistant
+await self.ai.assistant
   .create({
     initialPrompts: [{ role: 'user' }, { role: 'system' }],
   })
   .catch((err) => console.error(err));
 
 // Positive tests
-const assistant = await window.ai.assistant
+const assistant = await self.ai.assistant
   .create({
     topK: 1,
     temperature: 0,
@@ -42,7 +44,7 @@ const assistant = await window.ai.assistant
   .catch((err) => console.error(err));
 console.log(assistant);
 
-const assistantSystemOnly = await window.ai.assistant
+const assistantSystemOnly = await self.ai.assistant
   .create({
     topK: 1,
     temperature: 0,
@@ -60,7 +62,7 @@ const assistantSystemOnly = await window.ai.assistant
   .catch((err) => console.error(err));
 console.log(assistantSystemOnly);
 
-const assistantInitialPromptsOnly = await window.ai.assistant
+const assistantInitialPromptsOnly = await self.ai.assistant
   .create({
     topK: 1,
     temperature: 0,
@@ -82,7 +84,7 @@ const assistantInitialPromptsOnly = await window.ai.assistant
   .catch((err) => console.error(err));
 console.log(assistantInitialPromptsOnly);
 
-const assistantCapabilities = await window.ai.assistant
+const assistantCapabilities = await self.ai.assistant
   .capabilities()
   .catch((err) => console.error(err));
 console.log({
@@ -122,3 +124,14 @@ const assistantClone = await assistant.clone();
 console.log(assistantClone);
 
 assistant.destroy();
+
+/* Language Detector */
+
+const capabilities = await self.ai.languageDetector.capabilities();
+console.log(capabilities);
+console.log(capabilities.canDetect('de'));
+
+const detector = await self.ai.languageDetector.create();
+console.log(detector);
+
+await detector.detect('Hallo Welt');

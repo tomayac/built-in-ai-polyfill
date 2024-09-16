@@ -11,6 +11,7 @@ import {
   DEFAULT_TOPK,
   MAX_TOPK,
 } from './constants.js';
+import { AICreateMonitor } from './polyfill.js';
 
 let askAssistant;
 
@@ -189,15 +190,6 @@ class AIAssistantCapabilities {
   supportsLanguage(languageTag) {
     // ToDo
     return AICapabilityAvailability.READILY;
-  }
-}
-
-
-// AICreateMonitor Class
-class AICreateMonitor extends EventTarget {
-  constructor() {
-    super();
-    this.ondownloadprogress = null;
   }
 }
 

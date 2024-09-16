@@ -4,6 +4,7 @@
 */
 
 import AIAssistantFactory from './assistant.js';
+import AILanguageDetectorFactory from './language-detector.js';
 
 // Extend WindowOrWorkerGlobalScope
 (function extendWindowOrWorkerGlobalScope() {
@@ -24,5 +25,16 @@ import AIAssistantFactory from './assistant.js';
 class AI {
   constructor() {
     this.assistant = new AIAssistantFactory();
+    this.languageDetector = new AILanguageDetectorFactory();
   }
 }
+
+// AICreateMonitor Class
+class AICreateMonitor extends EventTarget {
+  constructor() {
+    super();
+    this.ondownloadprogress = null;
+  }
+}
+
+export { AICreateMonitor };
