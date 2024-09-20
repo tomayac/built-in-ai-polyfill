@@ -8,6 +8,7 @@ import {
   AICapabilityAvailability,
   MAX_TOKENS,
   DEFAULT_TEMPERATURE,
+  MAX_TEMPERATURE,
   DEFAULT_TOPK,
   MAX_TOPK,
 } from './constants.js';
@@ -20,7 +21,7 @@ class AIAssistantFactory {
   constructor() {
     this.__polyfill = {
       async setBackend(backend) {
-        askAssistant = (await import(`./ai-providers/${backend}.js`)).default;
+        askAssistant = (await import(`/ai-providers/${backend}.js`)).default;
       },
     };
   }
@@ -184,6 +185,7 @@ class AIAssistantCapabilities {
     this.available = AICapabilityAvailability.READILY;
     this.defaultTopK = DEFAULT_TOPK;
     this.maxTopK = MAX_TOPK;
+    this.maxTemperature = MAX_TEMPERATURE;
     this.defaultTemperature = DEFAULT_TEMPERATURE;
   }
 

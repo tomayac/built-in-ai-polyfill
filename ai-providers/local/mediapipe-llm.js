@@ -6,8 +6,8 @@
 import {
   FilesetResolver,
   LlmInference,
-} from '../../node_modules/@mediapipe/tasks-genai/genai_bundle.mjs';
-import { fileOpen } from '../../node_modules/browser-fs-access/dist/index.modern.js';
+} from 'mediapipe-llm/mediapipe-llm.esm.js';
+import { fileOpen } from 'browser-fs-access';
 
 let modelBlobURL;
 let genAI;
@@ -43,7 +43,7 @@ const loadModel = async () => {
   modelBlobURL = URL.createObjectURL(blob);
 
   genAI = await FilesetResolver.forGenAiTasks(
-    '../../node_modules/@mediapipe/tasks-genai//wasm'
+    '@mediapipe/tasks-genai//wasm'
   );
 };
 

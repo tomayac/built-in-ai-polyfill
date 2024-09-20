@@ -2,15 +2,13 @@ import { AICreateMonitor } from './polyfill.js';
 import {
   AICapabilityAvailability,
 } from './constants.js';
-import { getLIDModel } from './node_modules/fasttext.wasm.js/dist/main/common.mjs';
+import { getLIDModel } from 'fasttext.wasm.js/common'
 
 const lidModel = await getLIDModel({
-  wasmPath: '../node_modules/fasttext.wasm.js/dist/fastText/fasttext.common.wasm',
-    modelPath: '../node_modules/fasttext.wasm.js/dist/fastText/models/lid.176.ftz',
-  });
-await lidModel.load(
-
-);
+  wasmPath: '/fastText/fasttext.common.wasm',
+  modelPath: '/fastText/models/lid.176.ftz',
+});
+await lidModel.load();
 
 // AIAssistantFactory Class (as defined earlier)
 class AILanguageDetectorFactory {

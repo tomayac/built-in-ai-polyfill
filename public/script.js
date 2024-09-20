@@ -14,7 +14,7 @@ if (!('ai' in self) || !('assistant' in self.ai)) {
   link.href = `../ai-providers/${BACKEND}.js`;
   document.head.append(link);
 
-  await import('../polyfill.js');
+  await import('/polyfill.js');
   await self.ai.assistant.__polyfill.setBackend(BACKEND);
 
   if (!localStorage.getItem('GEMINI_API_KEY')) {

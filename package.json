@@ -3,17 +3,22 @@
   "version": "1.0.0",
   "main": "polyfill.js",
   "scripts": {
-    "start": "npx http-server",
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "fix": "prettier --write .",
-    "test": "node tests.js"
+    "postinstall": "shx cp -r node_modules/fasttext.wasm.js/dist/fastText ./"
   },
+  "type": "module",
   "author": "Thomas Steiner (tomac@google.com)",
   "license": "Apache-2.0",
   "description": "",
   "devDependencies": {
     "@types/dom-chromium-ai": "^0.0.0",
-    "http-server": "^14.1.1",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "shx": "^0.3.4",
+    "vite": "^5.4.6"
   },
   "dependencies": {
     "@mediapipe/tasks-genai": "^0.10.15",
