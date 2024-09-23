@@ -3,10 +3,7 @@
   SPDX-License-Identifier: Apache-2.0
 */
 
-import {
-  FilesetResolver,
-  LlmInference,
-} from 'mediapipe-llm/mediapipe-llm.esm.js';
+import { FilesetResolver, LlmInference } from '@mediapipe/tasks-genai';
 import { fileOpen } from 'browser-fs-access';
 
 let modelBlobURL;
@@ -42,9 +39,7 @@ const loadModel = async () => {
   });
   modelBlobURL = URL.createObjectURL(blob);
 
-  genAI = await FilesetResolver.forGenAiTasks(
-    '@mediapipe/tasks-genai//wasm'
-  );
+  genAI = await FilesetResolver.forGenAiTasks('/mediapipe');
 };
 
 // Event listeners to load model on click or keydown

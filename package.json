@@ -8,13 +8,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "fix": "prettier --write .",
-    "postinstall": "shx cp -r node_modules/fasttext.wasm.js/dist/fastText ./"
+    "postinstall": "shx cp -r node_modules/fasttext.wasm.js/dist/fastText ./ && shx cp -r node_modules/@mediapipe/tasks-genai/wasm ./mediapipe"
   },
   "type": "module",
   "author": "Thomas Steiner (tomac@google.com)",
   "license": "Apache-2.0",
   "description": "",
   "devDependencies": {
+    "@rollup/plugin-dynamic-import-vars": "^2.1.3",
     "@types/dom-chromium-ai": "^0.0.0",
     "prettier": "^3.3.3",
     "shx": "^0.3.4",

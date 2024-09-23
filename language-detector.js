@@ -1,8 +1,6 @@
 import { AICreateMonitor } from './polyfill.js';
-import {
-  AICapabilityAvailability,
-} from './constants.js';
-import { getLIDModel } from 'fasttext.wasm.js/common'
+import { AICapabilityAvailability } from './constants.js';
+import { getLIDModel } from 'fasttext.wasm.js/common';
 
 const lidModel = await getLIDModel({
   wasmPath: '/fastText/fasttext.common.wasm',
@@ -34,7 +32,7 @@ class AILanguageDetector {
   constructor() {}
 
   async detect(input, options = {}) {
-  const {alpha2, possibility} = await lidModel.identify(input);
+    const { alpha2, possibility } = await lidModel.identify(input);
     return [new LanguageDetectionResult(alpha2, possibility)];
   }
 

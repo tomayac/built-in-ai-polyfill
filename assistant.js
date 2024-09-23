@@ -21,7 +21,9 @@ class AIAssistantFactory {
   constructor() {
     this.__polyfill = {
       async setBackend(backend) {
-        askAssistant = (await import(`/ai-providers/${backend}.js`)).default;
+        const [where, provider] = backend.split('/');
+        askAssistant = (await import(`./ai-providers/${where}/${provider}.js`))
+          .default;
       },
     };
   }

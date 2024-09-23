@@ -7,7 +7,7 @@ import { marked } from 'https://cdn.jsdelivr.net/npm/marked@13.0.3/lib/marked.es
 import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs';
 
 if (!('ai' in self) || !('assistant' in self.ai)) {
-  const BACKEND = 'cloud/gemini';
+  const BACKEND = 'local/mediapipe-llm';
 
   const link = document.createElement('link');
   link.rel = 'modulepreload';
