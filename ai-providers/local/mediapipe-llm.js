@@ -5,6 +5,7 @@
 
 import { FilesetResolver, LlmInference } from '@mediapipe/tasks-genai';
 import { fileOpen } from 'browser-fs-access';
+import { get } from 'idb-keyval';
 
 let modelBlobURL;
 let genAI;
@@ -37,14 +38,62 @@ const loadModel = async () => {
     mimeTypes: ['application/octet-stream'],
     description: 'LLM model files',
   });
+  if (blob.handle) {
+    const set = (await import('idb-keyval')).set;
+    await set('llm-model', blob.handle);
+  }
   modelBlobURL = URL.createObjectURL(blob);
 
   genAI = await FilesetResolver.forGenAiTasks('/mediapipe');
 };
 
-// Event listeners to load model on click or keydown
-document.addEventListener('click', loadModel, { once: true });
-document.addEventListener('keydown', loadModel, { once: true });
+const triggerModelLoadOnInteraction = () => {
+  document.addEventListener('click', loadModel, { once: true });
+  document.addEventListener('keydown', loadModel, { once: true });
+};
+
+const init = async () => {
+  const handle = await get('llm-model');
+  if (handle) {
+    try {
+      const triggerModelRestoreOnInteraction = async () => {
+        if ((await handle.queryPermission()) !== 'granted') {
+          const decision = await handle.requestPermission();
+          if (decision === 'denied' || decision === 'prompt') {
+            return;
+          }
+        }
+        document.removeEventListener(
+          'click',
+          triggerModelRestoreOnInteraction,
+          { once: true }
+        );
+        document.removeEventListener(
+          'keydown',
+          triggerModelRestoreOnInteraction,
+          { once: true }
+        );
+        const blob = await handle.getFile();
+        modelBlobURL = URL.createObjectURL(blob);
+        genAI = await FilesetResolver.forGenAiTasks('/mediapipe');
+      };
+
+      document.addEventListener('click', triggerModelRestoreOnInteraction, {
+        once: true,
+      });
+      document.addEventListener('keydown', triggerModelRestoreOnInteraction, {
+        once: true,
+      });
+    } catch (err) {
+      console.error(err.name, err.message);
+      triggerModelLoadOnInteraction();
+    }
+  } else {
+    triggerModelLoadOnInteraction();
+  }
+};
+
+init();
 
 export default (prompt, options, callback) => {
   const abortController = new AbortController();
